@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEXUS CUP — Torneio de eSports</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+
+  <!-- SheetJS para exportação Excel -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <!-- jsPDF para exportação PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.7.1/jspdf.plugin.autotable.min.js"></script>
+ <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header">
+    <div class="scanlines"></div>
+    <div class="header-inner">
+      <div class="logo-block">
+        <div class="logo-icon" aria-hidden="true">
+          <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="30,4 56,18 56,42 30,56 4,42 4,18" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <polygon points="30,12 48,22 48,38 30,48 12,38 12,22" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".5"/>
+            <circle cx="30" cy="30" r="8" fill="currentColor"/>
+            <line x1="30" y1="12" x2="30" y2="22" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="30" y1="38" x2="30" y2="48" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="13" y1="22" x2="21" y2="26" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="39" y1="34" x2="47" y2="38" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="47" y1="22" x2="39" y2="26" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="21" y1="34" x2="13" y2="38" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title glitch" data-text="NEXUS CUP">NEXUS CUP</span>
+          <span class="logo-sub">Championship Series 2026</span>
+        </div>
+      </div>
+
+      <nav class="header-nav">
+        <button class="nav-btn active" data-view="home" onclick="showView('home')">Inscrição</button>
+        <button class="nav-btn" data-view="admin" onclick="showView('admin')">Painel Admin</button>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Alternar tema" aria-label="Alternar tema claro/escuro">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===== HOME VIEW ===== -->
+  <main id="view-home" class="view active">
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-content">
+        <p class="hero-eyebrow">Temporada 2026 · Vagas Limitadas</p>
+        <h1 class="hero-title">Inscreva sua equipe.<br/>Conquiste a arena.</h1>
+        <p class="hero-desc">Competições de alto nível em Valorant, CS2, League of Legends, Free Fire e Fortnite. Preencha o formulário abaixo e garanta sua vaga.</p>
+        <a href="#form-section" class="cta-btn">Inscrever Agora</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-card">
+          <span class="stat-num" id="stat-teams">0</span>
+          <span class="stat-label">Equipes</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num" id="stat-players">0</span>
+          <span class="stat-label">Jogadores</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num" id="stat-game">—</span>
+          <span class="stat-label">Jogo Popular</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Form Section -->
+    <section class="form-section" id="form-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Formulário de Inscrição</span>
+          <h2>Cadastre sua equipe</h2>
+        </div>
+
+        <form id="registration-form" novalidate>
+
+          <!-- BLOCO 1: Equipe -->
+          <div class="form-block">
+            <div class="block-header">
+              <span class="block-num">01</span>
+              <h3>Informações da Equipe</h3>
+            </div>
+            <div class="form-grid">
+              <div class="field-group">
+                <label for="team-name">Nome da Equipe <span class="req">*</span></label>
+                <input type="text" id="team-name" name="teamName" placeholder="Ex: Thunder Wolves" required maxlength="50" />
+                <span class="field-error" id="err-team-name"></span>
+              </div>
+              <div class="field-group">
+                <label for="team-tag">Tag da Equipe <span class="req">*</span></label>
+                <input type="text" id="team-tag" name="teamTag" placeholder="Ex: TWF" required maxlength="5" />
+                <span class="field-error" id="err-team-tag"></span>
+              </div>
+              <div class="field-group">
+                <label for="game">Jogo Participante <span class="req">*</span></label>
+                <select id="game" name="game" required>
+                  <option value="">Selecione o jogo</option>
+                  <option>Valorant</option>
+                  <option>CS2</option>
+                  <option>League of Legends</option>
+                  <option>Free Fire</option>
+                  <option>Fortnite</option>
+                  <option>Rainbow Six Siege</option>
+                  <option>Rocket League</option>
+                  <option>Apex Legends</option>
+                </select>
+                <span class="field-error" id="err-game"></span>
+              </div>
+              <div class="field-group">
+                <label for="city">Cidade <span class="req">*</span></label>
+                <input type="text" id="city" name="city" placeholder="Ex: São Paulo" required />
+                <span class="field-error" id="err-city"></span>
+              </div>
+              <div class="field-group">
+                <label for="state">Estado <span class="req">*</span></label>
+                <input type="text" id="state" name="state" placeholder="Ex: SP" required maxlength="2" />
+                <span class="field-error" id="err-state"></span>
+              </div>
+              <div class="field-group">
+                <label for="country">País <span class="req">*</span></label>
+                <input type="text" id="country" name="country" value="Brasil" required />
+                <span class="field-error" id="err-country"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- BLOCO 2: Capitão -->
+          <div class="form-block">
+            <div class="block-header">
+              <span class="block-num">02</span>
+              <h3>Capitão da Equipe</h3>
+            </div>
+            <div class="form-grid">
+              <div class="field-group col-2">
+                <label for="cap-name">Nome Completo <span class="req">*</span></label>
+                <input type="text" id="cap-name" name="capName" placeholder="Nome do capitão" required />
+                <span class="field-error" id="err-cap-name"></span>
+              </div>
+              <div class="field-group">
+                <label for="cap-nick">Nickname <span class="req">*</span></label>
+                <input type="text" id="cap-nick" name="capNick" placeholder="Ex: T0RP3D0" required />
+                <span class="field-error" id="err-cap-nick"></span>
+              </div>
+              <div class="field-group col-2">
+                <label for="cap-email">E-mail <span class="req">*</span></label>
+                <input type="email" id="cap-email" name="capEmail" placeholder="capitao@email.com" required />
+                <span class="field-error" id="err-cap-email"></span>
+              </div>
+              <div class="field-group">
+                <label for="cap-whatsapp">WhatsApp <span class="req">*</span></label>
+                <input type="tel" id="cap-whatsapp" name="capWhatsapp" placeholder="(11) 99999-9999" required />
+                <span class="field-error" id="err-cap-whatsapp"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- BLOCO 3: Jogadores -->
+          <div class="form-block">
+            <div class="block-header">
+              <span class="block-num">03</span>
+              <h3>Jogadores <span class="player-count-label" id="player-count-label">(1 jogador)</span></h3>
+            </div>
+            <div id="players-list"></div>
+            <button type="button" class="add-player-btn" id="add-player-btn" onclick="addPlayer()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+              Adicionar Jogador
+            </button>
+          </div>
+
+          <!-- BLOCO 4: Termos -->
+          <div class="form-block">
+            <div class="block-header">
+              <span class="block-num">04</span>
+              <h3>Termos e Autorização</h3>
+            </div>
+            <div class="terms-block">
+              <label class="checkbox-label">
+                <input type="checkbox" id="term-rules" name="termRules" required />
+                <span class="checkmark"></span>
+                <span>Li e aceito o <a href="#" onclick="return false">regulamento oficial</a> do torneio NEXUS CUP 2026.</span>
+              </label>
+              <span class="field-error" id="err-terms"></span>
+              <label class="checkbox-label">
+                <input type="checkbox" id="term-image" name="termImage" />
+                <span class="checkmark"></span>
+                <span>Autorizo o uso da imagem e nome da equipe para fins de divulgação do torneio.</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <div class="form-submit-area">
+            <button type="submit" class="submit-btn" id="submit-btn">
+              <span class="btn-text">Confirmar Inscrição</span>
+              <span class="btn-icon" aria-hidden="true">→</span>
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== ADMIN VIEW ===== -->
+  <main id="view-admin" class="view">
+    <div class="container">
+
+      <!-- Dashboard Cards -->
+      <div class="section-header">
+        <span class="section-tag">Área Restrita</span>
+        <h2>Painel de Inscrições</h2>
+      </div>
+
+      <div class="dashboard-cards">
+        <div class="dash-card">
+          <span class="dash-icon">🏆</span>
+          <span class="dash-num" id="dash-teams">0</span>
+          <span class="dash-label">Equipes Inscritas</span>
+        </div>
+        <div class="dash-card">
+          <span class="dash-icon">🎮</span>
+          <span class="dash-num" id="dash-players">0</span>
+          <span class="dash-label">Total de Jogadores</span>
+        </div>
+        <div class="dash-card">
+          <span class="dash-icon">🔥</span>
+          <span class="dash-num" id="dash-popular">—</span>
+          <span class="dash-label">Jogo Mais Popular</span>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="admin-toolbar">
+        <div class="toolbar-left">
+          <div class="search-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="search-input" placeholder="Buscar por nome da equipe…" oninput="filterTeams()" />
+          </div>
+          <select id="filter-game" onchange="filterTeams()" class="filter-select">
+            <option value="">Todos os jogos</option>
+            <option>Valorant</option>
+            <option>CS2</option>
+            <option>League of Legends</option>
+            <option>Free Fire</option>
+            <option>Fortnite</option>
+            <option>Rainbow Six Siege</option>
+            <option>Rocket League</option>
+            <option>Apex Legends</option>
+          </select>
+        </div>
+        <div class="toolbar-right">
+          <button class="tool-btn export-csv" onclick="exportCSV()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10,9 9,9 8,9"/></svg>
+            Excel
+          </button>
+          <button class="tool-btn export-pdf" onclick="exportPDF()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            PDF
+          </button>
+          <button class="tool-btn clear-all danger" onclick="clearAllRegistrations()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            Limpar Tudo
+          </button>
+        </div>
+      </div>
+
+      <!-- Teams Table -->
+      <div class="table-wrap">
+        <table class="teams-table" id="teams-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Equipe</th>
+              <th>Tag</th>
+              <th>Jogo</th>
+              <th>Capitão</th>
+              <th>Contato</th>
+              <th>Jogadores</th>
+              <th>Data</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="teams-tbody"></tbody>
+        </table>
+        <div class="empty-state" id="empty-state">
+          <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="40" cy="40" r="36" stroke="currentColor" stroke-width="2" opacity=".3"/>
+            <path d="M25 40h30M40 25v30" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".5"/>
+          </svg>
+          <p>Nenhuma inscrição encontrada.</p>
+          <span>Inscrições aparecerão aqui após o cadastro.</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== EDIT MODAL ===== -->
+  <div id="edit-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modal-title">Editar Inscrição</h3>
+        <button class="modal-close" onclick="closeModal()" aria-label="Fechar">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="edit-form">
+          <input type="hidden" id="edit-id" />
+          <div class="form-grid">
+            <div class="field-group"><label>Nome da Equipe</label><input type="text" id="edit-team-name" required /></div>
+            <div class="field-group"><label>Tag</label><input type="text" id="edit-team-tag" required maxlength="5" /></div>
+            <div class="field-group"><label>Jogo</label>
+              <select id="edit-game">
+                <option>Valorant</option><option>CS2</option><option>League of Legends</option>
+                <option>Free Fire</option><option>Fortnite</option><option>Rainbow Six Siege</option>
+                <option>Rocket League</option><option>Apex Legends</option>
+              </select>
+            </div>
+            <div class="field-group"><label>Cidade</label><input type="text" id="edit-city" /></div>
+            <div class="field-group"><label>Estado</label><input type="text" id="edit-state" maxlength="2" /></div>
+            <div class="field-group col-2"><label>Capitão</label><input type="text" id="edit-cap-name" /></div>
+            <div class="field-group"><label>Nickname</label><input type="text" id="edit-cap-nick" /></div>
+            <div class="field-group col-2"><label>E-mail</label><input type="email" id="edit-cap-email" /></div>
+            <div class="field-group"><label>WhatsApp</label><input type="tel" id="edit-cap-whatsapp" /></div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="tool-btn" onclick="closeModal()">Cancelar</button>
+        <button class="submit-btn sm" onclick="saveEdit()">Salvar Alterações</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CONFIRM MODAL ===== -->
+  <div id="confirm-modal" class="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal-box sm">
+      <div class="modal-header">
+        <h3 id="confirm-title">Confirmar exclusão</h3>
+        <button class="modal-close" onclick="closeConfirm()" aria-label="Fechar">✕</button>
+      </div>
+      <div class="modal-body">
+        <p id="confirm-message">Tem certeza que deseja excluir esta inscrição? Essa ação não pode ser desfeita.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="tool-btn" onclick="closeConfirm()">Cancelar</button>
+        <button class="submit-btn sm danger" id="confirm-ok-btn">Excluir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOAST ===== -->
+  <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
+  <footer class="site-footer">
+    <p>NEXUS CUP 2026 &copy; Todos os direitos reservados · <span id="footer-date"></span></p>
+  </footer>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
